@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">VkCup2</string>
+    <string name="multi_stage_survey">Многоступенчатый опрос с вариантами ответов</string>
+    <string name="element_mapping">Сопоставление элементов между двумя столбцами</string>
+    <string name="drag_and_drop_options">Перетаскивание вариантов в пропуски в тексте</string>
+    <string name="filling_in_the_gap">Заполнение пропуска в тексте</string>
+    <string name="read_article_rating">Оценка прочитанной статьи — от 1 до 5 звёзд</string>
+    <string name="next">Следующий</string>
+    <string name="prev">Предыдущий</string>
+    <string name="finish">Завершить</string>
+</resources>
