@@ -3,31 +3,31 @@ package com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.model
 data class Question(
     val showResult: Boolean = false,
     val question: String,
-    val answers: List<Answer>,
-    val totalVotes: Int = answers.sumOf { it.selectedCount },
+    val multiStageAnswers: List<MultiStageAnswer>,
+    val totalVotes: Int = multiStageAnswers.sumOf { it.selectedCount },
 ) {
     companion object {
         val listMock = listOf(
             Question(
                 question = "Сколько лет занимаетесь андроид разработкой",
-                answers = listOf(
-                    Answer(
+                multiStageAnswers = listOf(
+                    MultiStageAnswer(
                         "Хочу начать",
                         3764
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "Менее полугода",
                         2313
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "Уже год",
                         751
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "От 1 до 3 лет",
                         221
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "Более 3 лет",
                         82
                     ),
@@ -35,20 +35,20 @@ data class Question(
             ),
             Question(
                 question = "Какую архитектуру используете чаще всего",
-                answers = listOf(
-                    Answer(
+                multiStageAnswers = listOf(
+                    MultiStageAnswer(
                         "MVI",
                         123
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "MVVM",
                         348
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "MVP",
                         72
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "MVC",
                         31
                     ),
@@ -56,12 +56,12 @@ data class Question(
             ),
             Question(
                 question = "Какой инструмент используете для построения UI",
-                answers = listOf(
-                    Answer(
+                multiStageAnswers = listOf(
+                    MultiStageAnswer(
                         "XML",
                         3425
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "Compose",
                         874
                     ),
@@ -69,24 +69,24 @@ data class Question(
             ),
             Question(
                 question = "Какую библиотеку навигации используете в своем проекте",
-                answers = listOf(
-                    Answer(
+                multiStageAnswers = listOf(
+                    MultiStageAnswer(
                         "Navigation component",
                         1711
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "Cicerone",
                         712
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "Compose navigation",
                         72
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "Odyssey",
                         22
                     ),
-                    Answer(
+                    MultiStageAnswer(
                         "Самописное решение",
                         892
                     ),

@@ -1,8 +1,9 @@
 package com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire
 
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.LinearProgressIndicator
@@ -14,20 +15,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.smartdev.vkcup2.R
 import com.smartdev.vkcup2.ui.screens.choose.components.ChooseButton
-import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.components.MultiStageQuestionnaireTobAppBar
-import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.components.QuestionField
+import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.components.AnswerField
+import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.components.TopAppBarWithProgress
 import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.model.MultiStageQuestionnaireUiState
 import com.smartdev.vkcup2.ui.theme.FillUnSelected
 import com.smartdev.vkcup2.ui.theme.MainBackgroundColor
 import com.smartdev.vkcup2.util.verticalSpace
+import com.smartdev.vkcup2.util.vibrateDevice
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MultiStageQuestionnaireScreen(
     modifier: Modifier = Modifier,
@@ -37,6 +39,8 @@ fun MultiStageQuestionnaireScreen(
     onClickBack: () -> Unit,
     onBackClick: () -> Unit
 ) {
+
+    val context = LocalContext.current
 
     with(uiState) {
         val animatedProgress by animateFloatAsState(
@@ -52,7 +56,7 @@ fun MultiStageQuestionnaireScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                MultiStageQuestionnaireTobAppBar(
+                TopAppBarWithProgress(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     questionIndex = currentQuestion + 1,
                     totalQuestionsCount = totalQuestion,
@@ -66,53 +70,64 @@ fun MultiStageQuestionnaireScreen(
                     color = Color.White
                 )
             }
-
-            Column(
+            Crossfade(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 32.dp, horizontal = 16.dp)
+                    .weight(1f),
+                targetState = currentQuestion,
+                animationSpec = tween(350)
             ) {
+                val question = questions[it]
 
-                val question = questions[currentQuestion]
-
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = question.question,
-                    color = Color.White,
-                    style = MaterialTheme.typography.h6,
-                    textAlign = TextAlign.Center
-                )
-                verticalSpace(height = 50.dp)
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                        .fillMaxSize()
+                        .padding(vertical = 32.dp, horizontal = 16.dp),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    question.answers.forEachIndexed { index, answer ->
-                        QuestionField(
-                            question = answer.text,
-                            showCounter = question.showResult,
-                            isSelected = answer.isSelected,
-                            count = answer.selectedCount,
-                            totalCount = question.totalVotes,
-                            onLongClick = {
-                                if (answer.isSelected) selectAnswer(
-                                    currentQuestion,
-                                    index,
-                                    true
-                                )
-                            },
-                            onClick = { selectAnswer(currentQuestion, index, false) }
-                        )
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = question.question,
+                        color = Color.White,
+                        style = MaterialTheme.typography.h6,
+                        textAlign = TextAlign.Center
+                    )
+                    verticalSpace(height = 50.dp)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        question.multiStageAnswers.forEachIndexed { index, answer ->
+                            AnswerField(
+                                answer = answer.text,
+                                showCounter = question.showResult,
+                                isSelected = answer.isSelected,
+                                count = answer.selectedCount,
+                                totalCount = question.totalVotes,
+                                onLongClick = {
+                                    if (answer.isSelected) selectAnswer(
+                                        currentQuestion,
+                                        index,
+                                        true
+                                    )
+                                },
+                                onClick = {
+                                    selectAnswer(currentQuestion, index, false)
+                                    if (!question.showResult) context.vibrateDevice()
+                                }
+                            )
+                        }
                     }
+                    verticalSpace(height = 18.dp)
+                    Text(
+                        modifier = Modifier.align(CenterHorizontally),
+                        text = " Проголосовало ${question.totalVotes} человек",
+                        style = MaterialTheme.typography.subtitle2,
+                        color = Color.White
+                    )
                 }
-                verticalSpace(height = 18.dp)
-                Text(
-                    modifier = Modifier.align(CenterHorizontally),
-                    text = " Проголосовало ${question.totalVotes} человек",
-                    style = MaterialTheme.typography.subtitle2,
-                    color = Color.White
-                )
+
             }
 
             Row(
@@ -121,36 +136,23 @@ fun MultiStageQuestionnaireScreen(
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp),
                 horizontalArrangement = Arrangement.spacedBy(50.dp)
             ) {
-                if (currentQuestion + 1 != 1) {
-                    ChooseButton(
-                        modifier = Modifier.weight(1f),
-                        backgroundColor = Color.White,
-                        textColor = Color.Black,
-                        text = stringResource(id = R.string.prev),
-                        onClick = onClickBack
-                    )
-                }
-                if (currentQuestion + 1 != totalQuestion) {
-                    ChooseButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .animateContentSize(),
-                        backgroundColor = Color.White,
-                        textColor = Color.Black,
-                        text = stringResource(id = R.string.next),
-                        onClick = onClickNext
-                    )
-                } else {
-                    ChooseButton(
-                        modifier = Modifier
-                            .weight(1f)
-                            .animateContentSize(),
-                        backgroundColor = Color.White,
-                        textColor = Color.Black,
-                        text = stringResource(id = R.string.finish),
-                        onClick = onClickNext
-                    )
-                }
+                ChooseButton(
+                    modifier = Modifier.weight(1f),
+                    backgroundColor = Color.White,
+                    textColor = Color.Black,
+                    text = stringResource(id = R.string.prev),
+                    onClick = onClickBack
+                )
+
+                ChooseButton(
+                    modifier = Modifier
+                        .weight(1f)
+                        .animateContentSize(),
+                    backgroundColor = Color.White,
+                    textColor = Color.Black,
+                    text = stringResource(id = R.string.next),
+                    onClick = onClickNext
+                )
             }
         }
     }

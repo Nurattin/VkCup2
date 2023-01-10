@@ -1,7 +1,7 @@
 package com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire
 
 import androidx.lifecycle.ViewModel
-import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.model.Answer
+import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.model.MultiStageAnswer
 import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.model.MultiStageQuestionnaireUiState
 import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.model.Question
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,12 +16,10 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
     fun onClickNext() {
         with(_multiStageQuestionnaireUiState) {
             val targetQuestion = value.currentQuestion + 1
-            if (targetQuestion < value.totalQuestion) {
-                update { currentState ->
-                    currentState.copy(
-                        currentQuestion = targetQuestion
-                    )
-                }
+            update { currentState ->
+                currentState.copy(
+                    currentQuestion = if (targetQuestion >= value.questions.size) 0 else targetQuestion
+                )
             }
         }
     }
@@ -29,12 +27,10 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
     fun onClickBack() {
         with(_multiStageQuestionnaireUiState) {
             val targetQuestion = value.currentQuestion - 1
-            if (targetQuestion > -1) {
-                update { currentState ->
-                    currentState.copy(
-                        currentQuestion = targetQuestion
-                    )
-                }
+            update { currentState ->
+                currentState.copy(
+                    currentQuestion = if (targetQuestion <= -1) _multiStageQuestionnaireUiState.value.questions.size - 1 else targetQuestion
+                )
             }
         }
     }
@@ -45,17 +41,17 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
             if (!currentQuestions.showResult || shouldRemoveAnswer) {
 
                 val updateAnswers = getUpdateAnswers(
-                    answers = currentQuestions.answers,
+                    multiStageAnswers = currentQuestions.multiStageAnswers,
                     answerPos = answerPos,
                     shouldRemoveAnswer = shouldRemoveAnswer
                 )
 
                 val updateQuestion = getUpdateQuestion(
-                        questions = value.questions,
-                        questionPos = questionPos,
-                        shouldRemoveAnswer = shouldRemoveAnswer,
-                        updateAnswers = updateAnswers
-                    )
+                    questions = value.questions,
+                    questionPos = questionPos,
+                    shouldRemoveAnswer = shouldRemoveAnswer,
+                    updateMultiStageAnswers = updateAnswers
+                )
 
                 update { currentState ->
                     currentState.copy(
@@ -70,7 +66,7 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
         questions: List<Question>,
         questionPos: Int,
         shouldRemoveAnswer: Boolean,
-        updateAnswers: List<Answer>
+        updateMultiStageAnswers: List<MultiStageAnswer>
     ) = questions
         .toMutableList()
         .let { currentQuestion ->
@@ -78,7 +74,7 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
             currentQuestion[questionPos] =
                 currentQuestion[questionPos].copy(
                     showResult = !shouldRemoveAnswer,
-                    answers = updateAnswers,
+                    multiStageAnswers = updateMultiStageAnswers,
                     totalVotes =
                     when (shouldRemoveAnswer) {
                         true -> totalCount - 1
@@ -90,10 +86,10 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
 
 
     private fun getUpdateAnswers(
-        answers: List<Answer>,
+        multiStageAnswers: List<MultiStageAnswer>,
         answerPos: Int,
         shouldRemoveAnswer: Boolean
-    ) = answers
+    ) = multiStageAnswers
         .toMutableList()
         .let { answersMut ->
             val totalCount = answersMut[answerPos].selectedCount

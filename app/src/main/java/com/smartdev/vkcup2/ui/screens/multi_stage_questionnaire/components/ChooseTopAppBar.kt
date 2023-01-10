@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MultiStageQuestionnaireTobAppBar(
+fun TopAppBarWithProgress(
     modifier: Modifier = Modifier,
     questionIndex: Int,
     totalQuestionsCount: Int,
@@ -59,7 +59,7 @@ fun MultiStageQuestionnaireTobAppBar(
 @Preview
 @Composable
 fun MultiStageQuestionnaireTobAppBarPreview() {
-    MultiStageQuestionnaireTobAppBar(
+    TopAppBarWithProgress(
         questionIndex = 3,
         totalQuestionsCount = 16,
         onBackClick = {}

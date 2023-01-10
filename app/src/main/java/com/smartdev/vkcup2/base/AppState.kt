@@ -20,10 +20,7 @@ fun rememberAppState(
 class AppState constructor(
     val navController: NavHostController,
 ) {
-
-    val currentDestination: NavDestination?
-        @Composable get() = navController.currentBackStackEntryAsState().value?.destination
-
+    
     fun navigate(route: String) {
         navController.navigate(route) {
             launchSingleTop = true

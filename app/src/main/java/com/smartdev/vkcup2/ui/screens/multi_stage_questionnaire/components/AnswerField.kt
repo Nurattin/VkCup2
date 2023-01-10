@@ -35,9 +35,9 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun QuestionField(
+fun AnswerField(
     modifier: Modifier = Modifier,
-    question: String,
+    answer: String,
     showCounter: Boolean,
     isSelected: Boolean,
     count: Int,
@@ -90,7 +90,7 @@ fun QuestionField(
                         color = Color.White
                     )
                 ) {
-                    append(question)
+                    append(answer)
                 }
                 if (showCounter) {
                     withStyle(
@@ -164,8 +164,8 @@ fun QuestionFieldPreview() {
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        QuestionField(
-            question = "MVVM",
+        AnswerField(
+            answer = "MVVM",
             showCounter = showCounter,
             totalCount = 123,
             count = 103,
@@ -179,8 +179,8 @@ fun QuestionFieldPreview() {
                 selectedIndex = -1
             }
         )
-        QuestionField(
-            question = "MVI",
+        AnswerField(
+            answer = "MVI",
             showCounter = showCounter,
             totalCount = 123,
             count = 20,

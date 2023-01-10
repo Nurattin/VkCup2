@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.VkCup2" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/purple_700</item>
+    <style name="Theme.VkCup2" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/main_background</item>
+        <item name="android:background">@color/main_background</item>
     </style>
 </resources>

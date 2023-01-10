@@ -14,7 +14,6 @@ object MultiStageQuestionnaireDestination : VkCupNavigationDestination {
 }
 
 fun NavGraphBuilder.multiStageQuestionnaire(
-    navigateTo: (route: String) -> Unit,
     onBackClick: () -> Unit
 ) {
     composable(
