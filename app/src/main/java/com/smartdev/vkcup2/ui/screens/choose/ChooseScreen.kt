@@ -19,7 +19,7 @@ import com.smartdev.vkcup2.R
 import com.smartdev.vkcup2.ui.screens.choose.components.ChooseButton
 import com.smartdev.vkcup2.ui.screens.choose.components.ChooseTopAppBar
 import com.smartdev.vkcup2.ui.screens.choose.components.listChoose
-import com.smartdev.vkcup2.ui.theme.MainBackgroundColor
+import com.smartdev.vkcup2.ui.theme.MainBackground
 import com.smartdev.vkcup2.util.verticalSpace
 
 
@@ -34,7 +34,7 @@ fun ChooseScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = MainBackgroundColor)
+            .background(color = MainBackground)
             .statusBarsPadding()
             .verticalScroll(scrollState)
             .padding(horizontal = 16.dp),

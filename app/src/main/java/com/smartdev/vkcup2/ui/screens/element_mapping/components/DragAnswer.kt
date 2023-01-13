@@ -11,12 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.dp
-import com.smartdev.vkcup2.ui.theme.FillUnSelected
+import androidx.compose.ui.res.dimensionResource
+import com.smartdev.vkcup2.R
+import com.smartdev.vkcup2.ui.theme.UnEnableBackground
+import com.smartdev.vkcup2.util.AnimateDuration
 import com.smartdev.vkcup2.util.DragTarget
-
 
 @Composable
 fun DragAnswer(
@@ -25,44 +26,40 @@ fun DragAnswer(
     resultIsShow: Boolean = false,
     text: String,
 ) {
-
     val bgColor by animateColorAsState(
         targetValue = when (canDrag) {
             true -> Color.White
-            false -> FillUnSelected
+            false -> UnEnableBackground
         },
-        animationSpec = tween(350)
+        animationSpec = tween(AnimateDuration.Long)
     )
-
     val textColor by animateColorAsState(
         targetValue = when (canDrag) {
             true -> Color.Black
             false -> Color.Transparent
         },
-        animationSpec = tween(350)
+        animationSpec = tween(AnimateDuration.Long)
     )
-
     DragTarget(
         modifier = Modifier,
         dataToDrop = text,
-        canDrag = canDrag && !resultIsShow,
-        content = {
-            Box(
-                modifier = modifier
-                    .graphicsLayer(
-                        shape = MaterialTheme.shapes.large,
-                        clip = true
-                    )
-                    .background(bgColor)
-                    .padding(vertical = 8.dp, horizontal = 12.dp)
-            ) {
-                Text(
-                    text = text,
-                    modifier = Modifier.align(Alignment.Center),
-                    color = textColor,
-                    style = MaterialTheme.typography.subtitle2
+        canDrag = canDrag && !resultIsShow
+    ) {
+        Box(
+            modifier = modifier
+                .clip(MaterialTheme.shapes.large)
+                .background(bgColor)
+                .padding(
+                    vertical = dimensionResource(id = R.dimen.chip_small),
+                    horizontal = dimensionResource(id = R.dimen.chip_medium),
                 )
-            }
+        ) {
+            Text(
+                text = text,
+                modifier = Modifier.align(Alignment.Center),
+                color = textColor,
+                style = MaterialTheme.typography.subtitle1
+            )
         }
-    )
+    }
 }

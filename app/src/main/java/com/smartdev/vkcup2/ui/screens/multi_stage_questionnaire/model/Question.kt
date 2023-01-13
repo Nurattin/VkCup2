@@ -9,86 +9,128 @@ data class Question(
     companion object {
         val listMock = listOf(
             Question(
-                question = "Сколько лет занимаетесь андроид разработкой",
+                question = "Какое из следующих объявлений переменных является действительным?",
                 multiStageAnswers = listOf(
                     MultiStageAnswer(
-                        "Хочу начать",
-                        3764
+                        "var hello: Int? = \"\"",
+                        320,
                     ),
                     MultiStageAnswer(
-                        "Менее полугода",
-                        2313
-                    ),
-                    MultiStageAnswer(
-                        "Уже год",
-                        751
-                    ),
-                    MultiStageAnswer(
-                        "От 1 до 3 лет",
-                        221
-                    ),
-                    MultiStageAnswer(
-                        "Более 3 лет",
+                        "String \"hello\" = hello",
                         82
+                    ),
+                    MultiStageAnswer(
+                        "val hello = \"hello\"",
+                        927,
+                        isCorrect = true
+                    ),
+                    MultiStageAnswer(
+                        "hello: String = \"hello\"",
+                        420
                     ),
                 )
             ),
             Question(
-                question = "Какую архитектуру используете чаще всего",
+                question = "Какой из следующих типов данных не является типом данных в Kotlin?",
                 multiStageAnswers = listOf(
                     MultiStageAnswer(
-                        "MVI",
-                        123
+                        "String",
+                        92
                     ),
                     MultiStageAnswer(
-                        "MVVM",
-                        348
+                        "Decimal",
+                        500,
+                        isCorrect = true
                     ),
                     MultiStageAnswer(
-                        "MVP",
+                        "Int",
                         72
                     ),
                     MultiStageAnswer(
-                        "MVC",
-                        31
+                        "Boolean",
+                        32
                     ),
                 )
             ),
             Question(
-                question = "Какой инструмент используете для построения UI",
+                question = "В Kotlin точкой входа в программу является",
                 multiStageAnswers = listOf(
                     MultiStageAnswer(
-                        "XML",
-                        3425
+                        "println()",
+                        24
                     ),
                     MultiStageAnswer(
-                        "Compose",
-                        874
+                        "val",
+                        10
+                    ),
+                    MultiStageAnswer(
+                        "main()",
+                        489,
+                        isCorrect = true
+                    ),
+                    MultiStageAnswer(
+                        "return",
+                        82
+                    ),
+                    MultiStageAnswer(
+                        "continue",
+                        120
+                    ),
+                    MultiStageAnswer(
+                        "start",
+                        160
                     ),
                 )
             ),
             Question(
-                question = "Какую библиотеку навигации используете в своем проекте",
+                question = "Что такое Jetpack Compose?",
                 multiStageAnswers = listOf(
                     MultiStageAnswer(
-                        "Navigation component",
-                        1711
+                        "Современный инструментарий для разработки пользовательского интерфейса Android",
+                        1711,
+                        isCorrect = true
                     ),
                     MultiStageAnswer(
-                        "Cicerone",
+                        "Инструментарий для разработки библиотек",
                         712
                     ),
                     MultiStageAnswer(
-                        "Compose navigation",
-                        72
+                        "Интерфейс базы данных",
+                        423
                     ),
                     MultiStageAnswer(
-                        "Odyssey",
-                        22
+                        "Плагин для сборки APK",
+                        520
+                    ),
+                )
+            ),
+            Question(
+                question = "Какая аннотация используется для аннотирования составной функции?",
+                multiStageAnswers = listOf(
+                    MultiStageAnswer(
+                        "@Annotation",
+                        120,
                     ),
                     MultiStageAnswer(
-                        "Самописное решение",
-                        892
+                        "@ComposableFunction",
+                        712
+                    ),
+                    MultiStageAnswer(
+                        "@Composable",
+                        1200,
+                        isCorrect = true
+                    ),
+                    MultiStageAnswer(
+                        "@Preview",
+                        732
+                    ),
+                    MultiStageAnswer(
+                        "@Component",
+                        400
+                    ),
+                    MultiStageAnswer(
+                        "@Ui",
+                        632
                     ),
                 )
             )

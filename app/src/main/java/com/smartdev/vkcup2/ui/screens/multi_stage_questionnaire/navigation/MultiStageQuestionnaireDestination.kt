@@ -27,7 +27,7 @@ fun NavGraphBuilder.multiStageQuestionnaire(
             uiState = uiState,
             onBackClick = onBackClick,
             onClickNext = viewModel::onClickNext,
-            onClickBack = viewModel::onClickBack,
+            onClickPrev = viewModel::onClickBack,
             selectAnswer = viewModel::selectAnswer
         )
     }

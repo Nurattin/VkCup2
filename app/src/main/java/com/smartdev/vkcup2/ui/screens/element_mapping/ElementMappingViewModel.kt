@@ -1,21 +1,22 @@
 package com.smartdev.vkcup2.ui.screens.element_mapping
 
 import androidx.lifecycle.ViewModel
+import com.smartdev.vkcup2.ui.screens.element_mapping.components.ActionType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class ElementMappingViewModel() : ViewModel() {
+class ElementMappingViewModel : ViewModel() {
 
     private val _elementMappingUiState = MutableStateFlow(ElementMappingUiState())
     val elementMappingUiState = _elementMappingUiState.asStateFlow()
 
     fun onClickNext() {
         with(_elementMappingUiState) {
-            val targetQuestion = value.currentQuestion + 1
+            val targetQuestion = value.page + 1
             update { currentState ->
                 currentState.copy(
-                    currentQuestion = if (targetQuestion >= value.questions.size) 0 else targetQuestion
+                    page = if (targetQuestion >= value.questions.size) 0 else targetQuestion
                 )
             }
         }
@@ -23,10 +24,10 @@ class ElementMappingViewModel() : ViewModel() {
 
     fun onClickBack() {
         with(_elementMappingUiState) {
-            val targetQuestion = value.currentQuestion - 1
+            val targetQuestion = value.page - 1
             update { currentState ->
                 currentState.copy(
-                    currentQuestion = if (targetQuestion <= -1) _elementMappingUiState.value.questions.size - 1 else targetQuestion
+                    page = if (targetQuestion <= -1) _elementMappingUiState.value.questions.size - 1 else targetQuestion
                 )
             }
         }
@@ -36,31 +37,55 @@ class ElementMappingViewModel() : ViewModel() {
         _elementMappingUiState.update { currentState ->
             currentState.copy(
                 questions = currentState.questions.toMutableList().let {
-                    it[currentState.currentQuestion] =
-                        it[currentState.currentQuestion].copy(showResult = true)
+                    it[currentState.page] =
+                        it[currentState.page].copy(showResult = true)
                     it.toList()
                 },
             )
         }
     }
 
-    fun addSelectedAnswer(questionPos: Int, answer: String) {
+    fun changeAnswer(questionPos: Int, answer: String, actionType: ActionType) {
         with(_elementMappingUiState) {
-            val currentQuestion = value.questions[value.currentQuestion].questions[questionPos]
-            if (currentQuestion.selectedAnswer != answer) {
+            val currentQuestion = value.questions[value.page].questions[questionPos]
+            if (currentQuestion.selectedAnswer != answer || actionType != ActionType.Add) {
+                var replaceAnswer = ""
                 val updateQuestion = value.questions
                     .toMutableList()
                     .let { outQ ->
-                        outQ[value.currentQuestion] = outQ[value.currentQuestion].copy(
-                            questions = outQ[value.currentQuestion].questions
+                        val currentQuestionIn = outQ[value.page]
+                        outQ[value.page] = currentQuestionIn.copy(
+                            questions = currentQuestionIn.questions
                                 .toMutableList()
                                 .let { inQ ->
-                                    inQ[questionPos] =
-                                        inQ[questionPos].copy(selectedAnswer = answer)
+                                    val currentAnswer = inQ[questionPos]
+                                    when (actionType) {
+                                        ActionType.Add -> inQ[questionPos] =
+                                            currentAnswer.copy(selectedAnswer = answer)
+                                        ActionType.Delete -> inQ[questionPos] =
+                                            currentAnswer.copy(selectedAnswer = "")
+                                        ActionType.Replace -> {
+                                            replaceAnswer = inQ[questionPos].selectedAnswer
+                                            inQ[questionPos] =
+                                                currentAnswer.copy(selectedAnswer = answer)
+                                        }
+                                    }
                                     inQ.toList()
                                 },
-                            answerOptions = outQ[value.currentQuestion].answerOptions
-                                .map { if (it.text == answer) it.copy(isSelected = true) else it }
+                            answerOptions = when (actionType) {
+                                ActionType.Add -> currentQuestionIn.answerOptions
+                                    .map { if (it.text == answer) it.copy(isSelected = true) else it }
+                                ActionType.Delete -> currentQuestionIn.answerOptions
+                                    .map { if (it.text == answer) it.copy(isSelected = false) else it }
+                                ActionType.Replace -> currentQuestionIn.answerOptions
+                                    .map {
+                                        when (it.text) {
+                                            replaceAnswer -> it.copy(isSelected = false)
+                                            answer -> it.copy(isSelected = true)
+                                            else -> it
+                                        }
+                                    }
+                            }
                         )
                         outQ.toList()
                     }
@@ -70,70 +95,12 @@ class ElementMappingViewModel() : ViewModel() {
             }
         }
     }
-
-    fun deleteSelectedAnswer(questionPos: Int, answer: String) {
-        with(_elementMappingUiState) {
-            val updateQuestion = value.questions
-                .toMutableList()
-                .let { outQ ->
-                    outQ[value.currentQuestion] = outQ[value.currentQuestion].copy(
-                        questions = outQ[value.currentQuestion].questions
-                            .toMutableList()
-                            .let { inQ ->
-                                inQ[questionPos] =
-                                    inQ[questionPos].copy(selectedAnswer = "")
-                                inQ.toList()
-                            },
-                        answerOptions = outQ[value.currentQuestion].answerOptions
-                            .map { if (it.text == answer) it.copy(isSelected = false) else it }
-                    )
-                    outQ.toList()
-                }
-            update { currentState ->
-                currentState.copy(questions = updateQuestion)
-            }
-        }
-    }
-
-    fun replaceSelectedAnswer(questionPos: Int, answer: String) {
-        with(_elementMappingUiState) {
-
-            val replaceAnswer: String
-
-            val updateQuestion = value.questions
-                .toMutableList()
-                .let { outQ ->
-                    outQ[value.currentQuestion] = outQ[value.currentQuestion].copy(
-                        questions = outQ[value.currentQuestion].questions
-                            .toMutableList()
-                            .let { inQ ->
-                                replaceAnswer = inQ[questionPos].selectedAnswer
-                                inQ[questionPos] =
-                                    inQ[questionPos].copy(selectedAnswer = answer)
-                                inQ.toList()
-                            },
-                        answerOptions = outQ[value.currentQuestion].answerOptions
-                            .map {
-                                when (it.text) {
-                                    replaceAnswer -> it.copy(isSelected = false)
-                                    answer -> it.copy(isSelected = true)
-                                    else -> it
-                                }
-                            }
-                    )
-                    outQ.toList()
-                }
-            update { currentState ->
-                currentState.copy(questions = updateQuestion)
-            }
-        }
-    }
 }
 
 
 data class ElementMappingUiState(
     val questions: List<ElementMappingQuestions> = ElementMappingQuestions.mockDate,
-    val currentQuestion: Int = 0,
+    val page: Int = 0,
     val resultIsCorrect: Boolean? = null
 
 )

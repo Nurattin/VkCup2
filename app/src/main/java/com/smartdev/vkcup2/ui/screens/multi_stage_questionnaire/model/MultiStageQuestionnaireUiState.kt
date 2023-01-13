@@ -4,6 +4,6 @@ import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.model.Question.C
 
 data class MultiStageQuestionnaireUiState(
     val questions: List<Question> = listMock,
-    val currentQuestion: Int = 0,
+    val page: Int = 0,
     val totalQuestion: Int = questions.size,
 )

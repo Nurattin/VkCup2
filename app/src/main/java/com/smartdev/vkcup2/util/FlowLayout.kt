@@ -22,31 +22,6 @@ fun FlowRow(
 ) {
     Flow(
         modifier = modifier,
-        orientation = LayoutOrientation.Horizontal,
-        mainAxisSize = mainAxisSize,
-        mainAxisAlignment = mainAxisAlignment,
-        mainAxisSpacing = mainAxisSpacing,
-        crossAxisAlignment = crossAxisAlignment,
-        crossAxisSpacing = crossAxisSpacing,
-        lastLineMainAxisAlignment = lastLineMainAxisAlignment,
-        content = content
-    )
-}
-
-@Composable
-fun FlowColumn(
-    modifier: Modifier = Modifier,
-    mainAxisSize: SizeMode = SizeMode.Wrap,
-    mainAxisAlignment: FlowMainAxisAlignment = MainAxisAlignment.Start,
-    mainAxisSpacing: Dp = 0.dp,
-    crossAxisAlignment: FlowCrossAxisAlignment = FlowCrossAxisAlignment.Start,
-    crossAxisSpacing: Dp = 0.dp,
-    lastLineMainAxisAlignment: FlowMainAxisAlignment = mainAxisAlignment,
-    content: @Composable () -> Unit
-) {
-    Flow(
-        modifier = modifier,
-        orientation = LayoutOrientation.Vertical,
         mainAxisSize = mainAxisSize,
         mainAxisAlignment = mainAxisAlignment,
         mainAxisSpacing = mainAxisSpacing,
@@ -59,9 +34,7 @@ fun FlowColumn(
 
 enum class FlowCrossAxisAlignment {
     Center,
-
     Start,
-
     End,
 }
 
@@ -70,7 +43,6 @@ typealias FlowMainAxisAlignment = MainAxisAlignment
 @Composable
 private fun Flow(
     modifier: Modifier,
-    orientation: LayoutOrientation,
     mainAxisSize: SizeMode,
     mainAxisAlignment: FlowMainAxisAlignment,
     mainAxisSpacing: Dp,
@@ -79,11 +51,9 @@ private fun Flow(
     lastLineMainAxisAlignment: FlowMainAxisAlignment,
     content: @Composable () -> Unit
 ) {
-    fun Placeable.mainAxisSize() =
-        if (orientation == LayoutOrientation.Horizontal) width else height
+    fun Placeable.mainAxisSize() = width
 
-    fun Placeable.crossAxisSize() =
-        if (orientation == LayoutOrientation.Horizontal) height else width
+    fun Placeable.crossAxisSize() = height
 
     Layout(content, modifier) { measurables, outerConstraints ->
         val sequences = mutableListOf<List<Placeable>>()
@@ -97,13 +67,10 @@ private fun Flow(
         var currentMainAxisSize = 0
         var currentCrossAxisSize = 0
 
-        val constraints = OrientationIndependentConstraints(outerConstraints, orientation)
+        val constraints =
+            OrientationIndependentConstraints(outerConstraints, LayoutOrientation.Horizontal)
 
-        val childConstraints = if (orientation == LayoutOrientation.Horizontal) {
-            Constraints(maxWidth = constraints.mainAxisMax)
-        } else {
-            Constraints(maxHeight = constraints.mainAxisMax)
-        }
+        val childConstraints = Constraints(maxWidth = constraints.mainAxisMax)
 
         fun canAddToCurrentSequence(placeable: Placeable) =
             currentSequence.isEmpty() || currentMainAxisSize + mainAxisSpacing.roundToPx() +
@@ -149,18 +116,7 @@ private fun Flow(
         }
         val crossAxisLayoutSize = max(crossAxisSpace, constraints.crossAxisMin)
 
-        val layoutWidth = if (orientation == LayoutOrientation.Horizontal) {
-            mainAxisLayoutSize
-        } else {
-            crossAxisLayoutSize
-        }
-        val layoutHeight = if (orientation == LayoutOrientation.Horizontal) {
-            crossAxisLayoutSize
-        } else {
-            mainAxisLayoutSize
-        }
-
-        layout(layoutWidth, layoutHeight) {
+        layout(mainAxisLayoutSize, crossAxisLayoutSize) {
             sequences.forEachIndexed { i, placeables ->
                 val childrenMainAxisSizes = IntArray(placeables.size) { j ->
                     placeables[j].mainAxisSize() +
@@ -190,23 +146,16 @@ private fun Flow(
                                 LayoutDirection.Ltr
                             ).y
                     }
-                    if (orientation == LayoutOrientation.Horizontal) {
-                        placeable.place(
-                            x = mainAxisPositions[j],
-                            y = crossAxisPositions[i] + crossAxis
-                        )
-                    } else {
-                        placeable.place(
-                            x = crossAxisPositions[i] + crossAxis,
-                            y = mainAxisPositions[j]
-                        )
-                    }
+                    placeable.place(
+                        x = mainAxisPositions[j],
+                        y = crossAxisPositions[i] + crossAxis
+                    )
+
                 }
             }
         }
     }
 }
-
 enum class SizeMode {
     Wrap,
     Expand
@@ -214,14 +163,5 @@ enum class SizeMode {
 
 enum class MainAxisAlignment(internal val arrangement: Arrangement.Vertical) {
     Center(Arrangement.Center),
-
     Start(Arrangement.Top),
-
-    End(Arrangement.Bottom),
-
-    SpaceEvenly(Arrangement.SpaceEvenly),
-
-    SpaceBetween(Arrangement.SpaceBetween),
-
-    SpaceAround(Arrangement.SpaceAround);
 }

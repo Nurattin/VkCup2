@@ -29,15 +29,12 @@ fun LongPressDraggable(
         {
             content()
             if (state.isDragging) {
-                var targetSize by remember {
-                    mutableStateOf(IntSize.Zero)
-                }
-                val animateOffset by animateOffsetAsState(targetValue = state.dragPosition)
+                var targetSize by remember { mutableStateOf(IntSize.Zero) }
                 Box(modifier = Modifier
                     .graphicsLayer {
                         val offset = state.dragPosition + state.dragOffset
-                        scaleX = 1.2f
-                        scaleY = 1.2f
+                        scaleX = 1.1f
+                        scaleY = 1.1f
                         alpha = if (targetSize == IntSize.Zero) 0f else .9f
                         translationX = offset.x.minus(targetSize.width / 2)
                         translationY = offset.y.minus(targetSize.height / 2)

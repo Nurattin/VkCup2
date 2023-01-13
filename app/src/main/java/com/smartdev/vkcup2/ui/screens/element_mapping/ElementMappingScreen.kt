@@ -1,36 +1,40 @@
 package com.smartdev.vkcup2.ui.screens.element_mapping
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.smartdev.vkcup2.R
-import com.smartdev.vkcup2.ui.screens.choose.components.ChooseButton
+import com.smartdev.vkcup2.common.AnimateContentSlider
+import com.smartdev.vkcup2.common.CheckButton
+import com.smartdev.vkcup2.common.TransitionButtons
+import com.smartdev.vkcup2.ui.screens.element_mapping.components.ActionType
 import com.smartdev.vkcup2.ui.screens.element_mapping.components.DragAnswer
 import com.smartdev.vkcup2.ui.screens.element_mapping.components.DropAnswer
 import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.components.TopAppBarWithProgress
-import com.smartdev.vkcup2.ui.theme.FillUnSelected
-import com.smartdev.vkcup2.ui.theme.MainBackgroundColor
+import com.smartdev.vkcup2.ui.theme.MainBackground
 import com.smartdev.vkcup2.util.FlowCrossAxisAlignment
 import com.smartdev.vkcup2.util.FlowRow
 import com.smartdev.vkcup2.util.LongPressDraggable
 import com.smartdev.vkcup2.util.verticalSpace
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ElementMappingScreen(
     modifier: Modifier = Modifier,
@@ -38,96 +42,83 @@ fun ElementMappingScreen(
     viewModel: ElementMappingViewModel
 ) {
     val uiState by viewModel.elementMappingUiState.collectAsState()
-
     with(uiState) {
-        val animatedProgress by animateFloatAsState(
-            targetValue = (currentQuestion + 1) / questions.size.toFloat(),
-            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
-        )
-        LongPressDraggable(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        LongPressDraggable(modifier = modifier.fillMaxSize()) {
             Column(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
-                    .background(color = MainBackgroundColor)
-                    .statusBarsPadding(),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .statusBarsPadding()
+                    .background(color = MainBackground),
+                horizontalAlignment = CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = spacedBy(dimensionResource(id = R.dimen.container_small))
+                ) {
                     TopAppBarWithProgress(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        questionIndex = currentQuestion + 1,
+                        questionIndex = page,
                         totalQuestionsCount = questions.size,
                         onBackClick = onBackClick
                     )
-                    LinearProgressIndicator(
-                        progress = animatedProgress,
+                    Text(
                         modifier = Modifier
+                            .padding(dimensionResource(id = R.dimen.container_small))
                             .fillMaxWidth(),
-                        backgroundColor = FillUnSelected,
-                        color = Color.White
+                        text = stringResource(id = R.string.element_mapping),
+                        style = MaterialTheme.typography.h6,
+                        textAlign = TextAlign.Center
                     )
                 }
-
-                Crossfade(
-                    targetState = currentQuestion,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(vertical = 32.dp, horizontal = 16.dp),
-                    animationSpec = tween(400)
-                ) {
+                AnimateContentSlider(
+                    modifier = Modifier.weight(1f),
+                    targetIndex = page,
+                    contentSize = questions.size,
+                ) { questionIndex ->
                     ElementMapping(
-                        elementMappingQuestions = questions[it],
-                        onReplaceAnswer = viewModel::replaceSelectedAnswer,
-                        onDeleteAnswer = viewModel::deleteSelectedAnswer,
-                        onAddAnswer = viewModel::addSelectedAnswer,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                vertical = dimensionResource(id = R.dimen.container_small),
+                                horizontal = dimensionResource(id = R.dimen.container_small)
+                            ),
+                        elementMappingQuestions = questions[questionIndex],
+                        changeAnswer = viewModel::changeAnswer
                     )
                 }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 32.dp),
-                    horizontalArrangement = Arrangement.spacedBy(50.dp)
+                Column(
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.container_small)),
+                    verticalArrangement = spacedBy(dimensionResource(id = R.dimen.container_small)),
                 ) {
-
-                    when (questions[currentQuestion].showResult) {
-                        true -> {
-                            ChooseButton(
-                                modifier = Modifier.weight(1f),
-                                backgroundColor = Color.White,
-                                textColor = Color.Black,
-                                text = stringResource(id = R.string.prev),
-                                onClick = viewModel::onClickBack
-                            )
-
-                            ChooseButton(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .animateContentSize(),
-                                backgroundColor = Color.White,
-                                textColor = Color.Black,
-                                text = stringResource(id = R.string.next),
-                                onClick = viewModel::onClickNext
-                            )
-                        }
-                        false -> {
-                            val currentQuestions = questions[currentQuestion].questions
-                            val checkIsEnable by remember(currentQuestions) {
-                                mutableStateOf(currentQuestions.all { it.selectedAnswer != "" })
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(id = R.dimen.container_small))
+                            .align(CenterHorizontally),
+                        text = stringResource(id = R.string.element_mapping_hint),
+                        style = MaterialTheme.typography.caption
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = spacedBy(50.dp)
+                    ) {
+                        val currentQuestion = questions[page]
+                        AnimatedContent(targetState = currentQuestion.showResult) { shouldShowCheckBtn ->
+                            when (shouldShowCheckBtn) {
+                                true -> TransitionButtons(
+                                    onClickNext = viewModel::onClickNext,
+                                    onClickPrev = viewModel::onClickBack,
+                                )
+                                false -> {
+                                    val currentQuestions = currentQuestion.questions
+                                    val checkIsEnable = remember(currentQuestions) {
+                                        currentQuestions.all { it.selectedAnswer.isNotEmpty() }
+                                    }
+                                    CheckButton(
+                                        enable = checkIsEnable,
+                                        onClick = viewModel::checkAnswer,
+                                    )
+                                }
                             }
-                            ChooseButton(
-                                modifier = Modifier.weight(1f),
-                                backgroundColor = Color.White,
-                                enable = checkIsEnable,
-                                textColor = Color.Black,
-                                shape = MaterialTheme.shapes.medium,
-                                text = stringResource(id = R.string.check),
-                                onClick = viewModel::checkAnswer
-                            )
                         }
                     }
                 }
@@ -140,39 +131,35 @@ fun ElementMappingScreen(
 private fun ElementMapping(
     modifier: Modifier = Modifier,
     elementMappingQuestions: ElementMappingQuestions,
-    onDeleteAnswer: (questionPos: Int, answer: String) -> Unit,
-    onAddAnswer: (questionPos: Int, answer: String) -> Unit,
-    onReplaceAnswer: (question: Int, answer: String) -> Unit,
+    changeAnswer: (questionPos: Int, answer: String, actionType: ActionType) -> Unit,
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(32.dp)
+        modifier = modifier,
+        verticalArrangement = spacedBy(dimensionResource(id = R.dimen.container_small))
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
                 .weight(1f)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.Center
         ) {
             elementMappingQuestions.questions.forEachIndexed { index, elementMappingQuestion ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(28.dp)
+                    horizontalArrangement = spacedBy(dimensionResource(id = R.dimen.container_small))
                 ) {
                     Text(
                         modifier = Modifier.weight(2f),
                         text = elementMappingQuestion.question,
                         style = MaterialTheme.typography.h6,
-                        color = Color.White
                     )
                     DropAnswer(
                         modifier = Modifier.weight(1f),
                         text = elementMappingQuestion.selectedAnswer,
-                        onAddAnswer = onAddAnswer,
-                        onDeleteAnswer = onDeleteAnswer,
-                        onReplaceAnswer = onReplaceAnswer,
+                        changeAnswer = changeAnswer,
                         questionPos = index,
                         resultIsCorrect = if (elementMappingQuestions.showResult) {
                             elementMappingQuestion.selectedAnswer == elementMappingQuestion.rightAnswer

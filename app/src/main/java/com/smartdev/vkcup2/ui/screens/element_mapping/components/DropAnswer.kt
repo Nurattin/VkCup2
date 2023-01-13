@@ -6,7 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
@@ -15,14 +17,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.smartdev.vkcup2.R
+import com.smartdev.vkcup2.ui.theme.Correct
+import com.smartdev.vkcup2.ui.theme.Error
 import com.smartdev.vkcup2.ui.theme.FillUnSelected
+import com.smartdev.vkcup2.util.AnimateDuration
 import com.smartdev.vkcup2.util.DropTarget
-import com.smartdev.vkcup2.util.shake
-
 
 @Composable
 fun DropAnswer(
@@ -30,100 +35,75 @@ fun DropAnswer(
     text: String,
     questionPos: Int,
     resultIsCorrect: Boolean? = null,
-    onDeleteAnswer: (questionPos: Int, answer: String) -> Unit,
-    onAddAnswer: (questionPos: Int, answer: String) -> Unit,
-    onReplaceAnswer: (question: Int, answer: String) -> Unit,
+    changeAnswer: (questionPos: Int, answer: String, actionType: ActionType) -> Unit,
 ) {
-
     DropTarget<String>(
         modifier = modifier
     ) { isInBound, item ->
-
         item?.let {
-            if (isInBound)
-                if (text.isNotEmpty()) onReplaceAnswer(questionPos, it)
-                else onAddAnswer(questionPos, it)
+            if (isInBound) changeAnswer(
+                questionPos, it, if (text.isNotEmpty()) ActionType.Replace else ActionType.Add
+            )
         }
-
+        val animationDelay = remember(resultIsCorrect) {
+            if (resultIsCorrect != null) questionPos * AnimateDuration.Fast else 0
+        }
         val bgColorAnim by animateColorAsState(
-            targetValue =
-            if (isInBound) Color.White.copy(0.2f)
-            else if (text.isEmpty()) FillUnSelected.copy(alpha = 0.1f)
-            else Color.White,
-            animationSpec = tween(400)
+            targetValue = when (resultIsCorrect) {
+                true -> Correct
+                false -> Error
+                else -> when {
+                    isInBound -> Color.White.copy(0.2f)
+                    text.isEmpty() -> FillUnSelected.copy(0.1f)
+                    else -> Color.White
+                }
+            },
+            animationSpec = tween(
+                durationMillis = AnimateDuration.Long,
+                delayMillis = animationDelay
+            )
         )
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .graphicsLayer(
-                    shape = MaterialTheme.shapes.large,
-                    clip = true,
-                )
-                .background(
-                    when (resultIsCorrect) {
-                        true -> Color.Green.copy(0.8f)
-                        false -> Color.Red.copy(0.8f)
-                        null -> null
-                    } ?: bgColorAnim
-                )
+                .clip(MaterialTheme.shapes.large)
+                .background(bgColorAnim)
                 .then(
-                    if (text.isEmpty()) {
+                    if (text.isEmpty())
                         Modifier.border(
                             width = 1.dp,
                             color = Color.White.copy(0.1f),
                             shape = MaterialTheme.shapes.large
                         )
-                    } else {
-                        Modifier
-                    }
+                    else Modifier
                 )
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(),
                     enabled = resultIsCorrect == null,
                     onClick = {
-                        if (text.isNotEmpty()) onDeleteAnswer(questionPos, text)
+                        if (text.isNotEmpty()) changeAnswer(
+                            questionPos, text, ActionType.Delete
+                        )
                     }
                 )
-                .padding(vertical = 8.dp, horizontal = 12.dp)
+                .padding(
+                    vertical = dimensionResource(id = R.dimen.chip_small),
+                    horizontal = dimensionResource(id = R.dimen.chip_small),
+                )
         ) {
             Text(
                 text = text.ifEmpty { "" },
                 modifier = Modifier.align(Alignment.Center),
                 color = if (resultIsCorrect != null) Color.White else Color.Black,
-                style = MaterialTheme.typography.subtitle2
+                style = MaterialTheme.typography.subtitle1,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
 }
 
-
-@Preview
-@Composable
-fun DropTargetFieldPreview(
-) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        DropAnswer(
-            modifier = Modifier.fillMaxWidth(0.5f),
-            text = "",
-            onDeleteAnswer = { _, _ -> },
-            onAddAnswer = { _, _ -> },
-            onReplaceAnswer = { _, _ -> },
-            questionPos = 1
-        )
-        DropAnswer(
-            modifier = Modifier.fillMaxWidth(0.5f),
-            text = "",
-            onDeleteAnswer = { _, _ -> },
-            onAddAnswer = { _, _ -> },
-            onReplaceAnswer = { _, _ -> },
-            questionPos = 1
-        )
-    }
+enum class ActionType {
+    Add, Delete, Replace
 }

@@ -4,4 +4,5 @@ data class MultiStageAnswer(
     val text: String,
     val selectedCount: Int,
     val isSelected: Boolean = false,
+    val isCorrect: Boolean = false,
 )

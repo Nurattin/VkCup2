@@ -15,10 +15,10 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
 
     fun onClickNext() {
         with(_multiStageQuestionnaireUiState) {
-            val targetQuestion = value.currentQuestion + 1
+            val targetQuestion = value.page + 1
             update { currentState ->
                 currentState.copy(
-                    currentQuestion = if (targetQuestion >= value.questions.size) 0 else targetQuestion
+                    page = if (targetQuestion >= value.questions.size) 0 else targetQuestion
                 )
             }
         }
@@ -26,30 +26,28 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
 
     fun onClickBack() {
         with(_multiStageQuestionnaireUiState) {
-            val targetQuestion = value.currentQuestion - 1
+            val targetQuestion = value.page - 1
             update { currentState ->
                 currentState.copy(
-                    currentQuestion = if (targetQuestion <= -1) _multiStageQuestionnaireUiState.value.questions.size - 1 else targetQuestion
+                    page = if (targetQuestion <= -1) _multiStageQuestionnaireUiState.value.questions.size - 1 else targetQuestion
                 )
             }
         }
     }
 
-    fun selectAnswer(questionPos: Int, answerPos: Int, shouldRemoveAnswer: Boolean) {
+    fun selectAnswer(questionPos: Int, answerPos: Int) {
         with(_multiStageQuestionnaireUiState) {
             val currentQuestions = value.questions[questionPos]
-            if (!currentQuestions.showResult || shouldRemoveAnswer) {
+            if (!currentQuestions.showResult) {
 
                 val updateAnswers = getUpdateAnswers(
                     multiStageAnswers = currentQuestions.multiStageAnswers,
                     answerPos = answerPos,
-                    shouldRemoveAnswer = shouldRemoveAnswer
                 )
 
                 val updateQuestion = getUpdateQuestion(
                     questions = value.questions,
                     questionPos = questionPos,
-                    shouldRemoveAnswer = shouldRemoveAnswer,
                     updateMultiStageAnswers = updateAnswers
                 )
 
@@ -65,7 +63,6 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
     private fun getUpdateQuestion(
         questions: List<Question>,
         questionPos: Int,
-        shouldRemoveAnswer: Boolean,
         updateMultiStageAnswers: List<MultiStageAnswer>
     ) = questions
         .toMutableList()
@@ -73,13 +70,9 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
             val totalCount = currentQuestion[questionPos].totalVotes
             currentQuestion[questionPos] =
                 currentQuestion[questionPos].copy(
-                    showResult = !shouldRemoveAnswer,
+                    showResult = true,
                     multiStageAnswers = updateMultiStageAnswers,
-                    totalVotes =
-                    when (shouldRemoveAnswer) {
-                        true -> totalCount - 1
-                        false -> totalCount + 1
-                    }
+                    totalVotes = totalCount + 1
                 )
             currentQuestion.toList()
         }
@@ -88,19 +81,14 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
     private fun getUpdateAnswers(
         multiStageAnswers: List<MultiStageAnswer>,
         answerPos: Int,
-        shouldRemoveAnswer: Boolean
     ) = multiStageAnswers
         .toMutableList()
         .let { answersMut ->
             val totalCount = answersMut[answerPos].selectedCount
             answersMut[answerPos] =
                 answersMut[answerPos].copy(
-                    isSelected = !shouldRemoveAnswer,
-                    selectedCount =
-                    when (shouldRemoveAnswer) {
-                        true -> totalCount - 1
-                        false -> totalCount + 1
-                    }
+                    isSelected = true,
+                    selectedCount = totalCount + 1
                 )
             answersMut.toList()
         }

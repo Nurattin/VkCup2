@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="star">32dp</dimen>
+    <dimen name="container_small">16dp</dimen>
+    <dimen name="container_medium">32dp</dimen>
+    <dimen name="btn_small">12dp</dimen>
+    <dimen name="btn_medium">14dp</dimen>
+    <dimen name="chip_small">8dp</dimen>
+    <dimen name="chip_medium">12dp</dimen>
+    <dimen name="chip_large">12dp</dimen>
+</resources>

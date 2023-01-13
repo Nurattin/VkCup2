@@ -1,12 +1,28 @@
 <resources>
     <string name="app_name">VkCup2</string>
-    <string name="multi_stage_survey">Многоступенчатый опрос с вариантами ответов</string>
-    <string name="element_mapping">Сопоставление элементов между двумя столбцами</string>
     <string name="drag_and_drop_options">Перетаскивание вариантов в пропуски в тексте</string>
-    <string name="filling_in_the_gap">Заполнение пропуска в тексте</string>
     <string name="read_article_rating">Оценка прочитанной статьи — от 1 до 5 звёзд</string>
+    <string name="question_count">Проголосовало %d человек</string>
+    <string name="percentage_selected">%d \%%</string>
     <string name="next">Следующий</string>
     <string name="prev">Предыдущий</string>
     <string name="finish">Завершить</string>
     <string name="check">Проверить</string>
+
+    //ElementMapping
+    <string name="element_mapping_main">Сопоставление элементов между двумя столбцами</string>
+    <string name="element_mapping">Сопоставьте элементы между двумя столбцами</string>
+    <string name="element_mapping_hint">Удерживайте чтобы перетащить ответ в нужную строку</string>
+
+    //MultiStageQuestionnaire
+    <string name="multi_stage_survey_main">Многоступенчатый опрос с вариантами ответов</string>
+    <string name="multi_stage_survey">Выберите правильный ответ</string>
+    <string name="multi_stage_survey_hint">Чтобы выбрать ответ просто нажмите на него</string>
+
+    //FillOmissionsText
+    <string name="filling_in_the_gap_main">Заполнение пропуска в тексте</string>
+    <string name="filling_in_the_gap">Заполнените пропуски в тексте</string>
+    <string name="filling_in_the_gap_hint">Нажмите на пропуск в тексте чтобы начать печатать</string>
+
+
 </resources>

@@ -24,10 +24,10 @@ fun NavGraphBuilder.choose(
         ChooseScreen(
             onClickChooseBtn = {
                 when (it) {
-                    R.string.multi_stage_survey -> navigateTo(MultiStageQuestionnaireDestination.route)
-                    R.string.element_mapping -> navigateTo(ElementMappingDestination.route)
+                    R.string.multi_stage_survey_main -> navigateTo(MultiStageQuestionnaireDestination.route)
+                    R.string.element_mapping_main -> navigateTo(ElementMappingDestination.route)
                     R.string.drag_and_drop_options -> navigateTo(OmissionsTextDestination.route)
-                    R.string.filling_in_the_gap -> navigateTo(FillOmissionTextDestination.route)
+                    R.string.filling_in_the_gap_main -> navigateTo(FillOmissionTextDestination.route)
                     R.string.read_article_rating ->navigateTo(RatingDestination.route)
                 }
             }
