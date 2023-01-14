@@ -63,6 +63,14 @@ fun DropAnswer(
                 delayMillis = animationDelay
             )
         )
+
+        val txColorAnim by animateColorAsState(
+            targetValue = if (resultIsCorrect != null) Color.White else Color.Black,
+            animationSpec = tween(
+                durationMillis = AnimateDuration.Long,
+                delayMillis = animationDelay
+            )
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -95,7 +103,7 @@ fun DropAnswer(
             Text(
                 text = text.ifEmpty { "" },
                 modifier = Modifier.align(Alignment.Center),
-                color = if (resultIsCorrect != null) Color.White else Color.Black,
+                color = txColorAnim,
                 style = MaterialTheme.typography.subtitle1,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -106,4 +114,89 @@ fun DropAnswer(
 
 enum class ActionType {
     Add, Delete, Replace
+}
+
+@Composable
+fun DropAnswerGapText(
+    modifier: Modifier = Modifier,
+    text: String,
+    questionPos: Int,
+    resultIsCorrect: Boolean? = null,
+    changeAnswer: (answer: String, actionType: ActionType, currentAnswer: String) -> Unit,
+) {
+    DropTarget<String>(
+        modifier = modifier
+    ) { isInBound, item ->
+        item?.let { dragText ->
+            if (isInBound) changeAnswer(
+                dragText,
+                when (text.isNotEmpty()) {
+                    true -> ActionType.Replace
+                    false -> ActionType.Add
+                },
+                text
+            )
+        }
+
+        val animationDelay = remember(resultIsCorrect) {
+            if (resultIsCorrect != null) questionPos * AnimateDuration.Fast else 0
+        }
+
+        val bgColorAnim by animateColorAsState(
+            targetValue = when (resultIsCorrect) {
+                true -> Correct
+                false -> Error
+                else -> when {
+                    isInBound -> Color.White.copy(0.2f)
+                    text.isEmpty() -> FillUnSelected.copy(0.1f)
+                    else -> Color.White
+                }
+            },
+            animationSpec = tween(
+                durationMillis = AnimateDuration.Long,
+                delayMillis = animationDelay
+            )
+        )
+
+        val txColorAnim by animateColorAsState(
+            targetValue = if (resultIsCorrect != null) Color.White else Color.Black,
+            animationSpec = tween(
+                durationMillis = AnimateDuration.Long,
+                delayMillis = animationDelay
+            )
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.small)
+                .background(bgColorAnim)
+                .then(
+                    if (text.isEmpty())
+                        Modifier.border(
+                            width = 1.dp,
+                            color = Color.White.copy(0.1f),
+                            shape = MaterialTheme.shapes.small
+                        )
+                    else Modifier
+                )
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(color = Color.Black),
+                    enabled = resultIsCorrect == null,
+                    onClick = {
+                        if (text.isNotEmpty()) changeAnswer(text, ActionType.Delete, text)
+                    }
+                )
+        ) {
+            Text(
+                text = text.ifEmpty { "" },
+                modifier = Modifier.align(Alignment.Center),
+                color = txColorAnim,
+                style = MaterialTheme.typography.body2,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+            )
+        }
+    }
 }

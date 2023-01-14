@@ -5,7 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.smartdev.vkcup2.util.ANIMATED_CONTENT_ANIMATION_DURATION
+import com.smartdev.vkcup2.util.AnimateDuration
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -30,10 +30,10 @@ fun AnimateContentSlider(
                 }
             slideIntoContainer(
                 towards = direction,
-                animationSpec = tween(ANIMATED_CONTENT_ANIMATION_DURATION)
+                animationSpec = tween(AnimateDuration.Long)
             ) with slideOutOfContainer(
                 towards = direction,
-                animationSpec = tween(ANIMATED_CONTENT_ANIMATION_DURATION)
+                animationSpec = tween(AnimateDuration.Long)
             )
         },
         content = content

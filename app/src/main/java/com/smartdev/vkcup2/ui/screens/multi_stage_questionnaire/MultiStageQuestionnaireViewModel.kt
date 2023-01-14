@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.model.MultiStageAnswer
 import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.model.MultiStageQuestionnaireUiState
 import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.model.Question
+import com.smartdev.vkcup2.util.getNextElementOrFirst
+import com.smartdev.vkcup2.util.getPrevElementOrLast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,24 +16,18 @@ class MultiStageQuestionnaireViewModel : ViewModel() {
     val multiStageQuestionnaireUiState = _multiStageQuestionnaireUiState.asStateFlow()
 
     fun onClickNext() {
-        with(_multiStageQuestionnaireUiState) {
-            val targetQuestion = value.page + 1
-            update { currentState ->
-                currentState.copy(
-                    page = if (targetQuestion >= value.questions.size) 0 else targetQuestion
-                )
-            }
+        _multiStageQuestionnaireUiState.update { currentState ->
+            currentState.copy(
+                page = currentState.questions.getNextElementOrFirst(currentState.page)
+            )
         }
     }
 
     fun onClickBack() {
-        with(_multiStageQuestionnaireUiState) {
-            val targetQuestion = value.page - 1
-            update { currentState ->
-                currentState.copy(
-                    page = if (targetQuestion <= -1) _multiStageQuestionnaireUiState.value.questions.size - 1 else targetQuestion
-                )
-            }
+        _multiStageQuestionnaireUiState.update { currentState ->
+            currentState.copy(
+                page = currentState.questions.getPrevElementOrLast(currentState.page)
+            )
         }
     }
 

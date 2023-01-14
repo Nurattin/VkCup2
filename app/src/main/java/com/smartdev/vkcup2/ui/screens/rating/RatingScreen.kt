@@ -19,7 +19,10 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.smartdev.vkcup2.R
 import com.smartdev.vkcup2.common.TransitionButtons
 import com.smartdev.vkcup2.ui.screens.rating.components.*
 import com.smartdev.vkcup2.ui.theme.*
@@ -49,7 +52,7 @@ fun RatingScreen(
             scrimColor = MainBackground.copy(0.5f),
             sheetContent = {
                 SheetContent(
-                    article = listArticle[currentArticle],
+                    article = listArticle[page],
                     ratingArticle = ratingArticle,
                     addComment = { comment ->
                         addComment(comment)
@@ -79,7 +82,7 @@ fun RatingScreen(
                     contentDescription = null,
                     tint = Color.White
                 )
-                Crossfade(targetState = currentArticle) { index ->
+                Crossfade(targetState = page) { index ->
                     MainContent(
                         article = listArticle[index],
                         onClickRating = {
@@ -157,19 +160,32 @@ private fun MainContent(
                 }
                 RatingFloatingActionButton(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 8.dp),
-                    userRating = userRating,
+                        .align(Alignment.BottomEnd)
+                        .padding(
+                            bottom = dimensionResource(id = R.dimen.chip_small),
+                            end = dimensionResource(id = R.dimen.container_small)
+                        ),
+                    isFavorite = userRating != null,
                     numberAppraisers = numberAppraisers.toString(),
                     onClickRating = onClickRating
                 )
             }
-            TransitionButtons(
-                modifier = Modifier
-                    .padding(16.dp),
-                onClickNext = onClickNext,
-                onClickPrev = onClickPrev,
-            )
+            Column(
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.container_small)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.container_small)),
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = dimensionResource(id = R.dimen.container_small))
+                        .align(CenterHorizontally),
+                    text = stringResource(id = R.string.rating_the_article_hint),
+                    style = MaterialTheme.typography.caption
+                )
+                TransitionButtons(
+                    onClickNext = onClickNext,
+                    onClickPrev = onClickPrev,
+                )
+            }
         }
     }
 }
@@ -194,7 +210,7 @@ private fun SheetContent(
     onClickClose: () -> Unit
 ) {
     with(article) {
-        Column(Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             Icon(
                 modifier = Modifier
                     .clickable(
@@ -202,25 +218,24 @@ private fun SheetContent(
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = onClickClose
                     )
-                    .padding(16.dp)
+                    .padding(dimensionResource(id = R.dimen.container_small))
                     .align(End),
                 imageVector = Icons.Rounded.Close,
                 contentDescription = null,
                 tint = Color.White
             )
-            verticalSpace(height = 16.dp)
+            verticalSpace(dimensionResource(id = R.dimen.container_small))
             Text(
                 modifier = Modifier.align(CenterHorizontally),
-                text = "Rating the article",
+                text = stringResource(R.string.rating_the_article),
                 style = MaterialTheme.typography.h6,
-                color = Color.White
             )
-            verticalSpace(height = 16.dp)
+            verticalSpace(dimensionResource(id = R.dimen.container_small))
             RatingBar(
                 rating = userRating ?: 0,
                 onClickRating = ratingArticle
             )
-            verticalSpace(height = 16.dp)
+            verticalSpace(dimensionResource(id = R.dimen.container_small))
             Text(
                 modifier = Modifier.align(CenterHorizontally),
                 text = "Оценило ${if (userRating != null) totalRating + 1 else totalRating} человек",
@@ -228,18 +243,19 @@ private fun SheetContent(
                 color = Color.White.copy(0.8f)
             )
             verticalSpace(height = 48.dp)
-
             AnimatedVisibility(visible = userRating != null) {
                 CommentTextField(
-                    onSentComment = { addComment(it) }
+                    onSentComment = addComment
                 )
             }
-            verticalSpace(height = 16.dp)
+            verticalSpace(dimensionResource(id = R.dimen.container_small))
             RatingTable(
-                modifier = Modifier.padding(start = 32.dp, end = 32.dp),
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(id = R.dimen.container_medium)
+                ),
                 ratingTable = ratingTable
             )
-            verticalSpace(height = 32.dp)
+            verticalSpace(dimensionResource(id = R.dimen.container_medium))
         }
     }
 }

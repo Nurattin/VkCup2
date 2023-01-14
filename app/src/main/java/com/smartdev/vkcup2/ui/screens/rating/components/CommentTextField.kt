@@ -23,9 +23,11 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.smartdev.vkcup2.R
 import com.smartdev.vkcup2.ui.theme.FillUnSelected
 import com.smartdev.vkcup2.ui.theme.SentButton
 import com.smartdev.vkcup2.util.AnimateEasing.EaseInBack
@@ -46,7 +48,7 @@ fun CommentTextField(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 32.dp)
+            .padding(horizontal = dimensionResource(id = R.dimen.container_medium))
             .onSizeChanged {
                 with(density) { textFieldSize = it.height.toDp() }
             },

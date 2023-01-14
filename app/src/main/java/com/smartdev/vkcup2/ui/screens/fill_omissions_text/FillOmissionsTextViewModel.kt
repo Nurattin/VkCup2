@@ -3,40 +3,50 @@ package com.smartdev.vkcup2.ui.screens.fill_omissions_text
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.smartdev.vkcup2.ui.screens.omissions_text.placeholder
+import com.smartdev.vkcup2.ui.screens.drag_omissions_text.placeholder
+import com.smartdev.vkcup2.util.getNextElementOrFirst
+import com.smartdev.vkcup2.util.getPrevElementOrLast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class FillOmissionsTextViewModel : ViewModel() {
 
-    private val listGap = PassTextState.mock.map { it }
-
+    private val listGap = PassTextState.mock.map { ques ->
+        ques.copy(listGap = ques.listGap.map { answer ->
+            answer.copy(currentValue = mutableStateOf(""))
+        })
+    }
     private val _fillOmissionsText = MutableStateFlow(FillOmissionsText(questions = listGap))
     val fillOmissionsText = _fillOmissionsText.asStateFlow()
 
     fun onClickNext() {
-        with(_fillOmissionsText) {
-            val targetQuestion = value.page + 1
-            update { currentState ->
-                currentState.copy(
-                    page = if (targetQuestion >= value.questions.size) 0 else targetQuestion
-                )
-            }
+        _fillOmissionsText.update { currentState ->
+            currentState.copy(
+                page = currentState.questions.getNextElementOrFirst(currentState.page)
+            )
         }
     }
 
     fun onClickBack() {
-        with(_fillOmissionsText) {
-            val targetQuestion = value.page - 1
-            update { currentState ->
-                currentState.copy(
-                    page = if (targetQuestion <= -1) value.questions.size - 1 else targetQuestion
-                )
-            }
+        _fillOmissionsText.update { currentState ->
+            currentState.copy(
+                page = currentState.questions.getPrevElementOrLast(currentState.page)
+            )
         }
     }
 
+    fun checkResult() {
+        _fillOmissionsText.update { currentValue ->
+            val updateQuestions = currentValue.questions.toMutableList().let { questions ->
+                questions[currentValue.page] = questions[currentValue.page].copy(
+                    showResult = true
+                )
+                questions.toList()
+            }
+            currentValue.copy(questions = updateQuestions)
+        }
+    }
 }
 
 data class FillOmissionsText(
@@ -104,6 +114,56 @@ data class PassTextState(
                         " Хорошей аналогией является ключевое слово Kotlin $placeholder .",
             ),
             PassTextState(
+                listGap
+                = listOf(
+                    Gap(
+                        currentValue = mutableStateOf(""),
+                        id = 1,
+                        rightValue = "class"
+                    ),
+                    Gap(
+                        currentValue = mutableStateOf(""),
+                        id = 2,
+                        rightValue = "ключевые"
+                    ),
+                    Gap(
+                        currentValue = mutableStateOf(""),
+                        id = 3,
+                        rightValue = "fun"
+                    ),
+                    Gap(
+                        currentValue = mutableStateOf(""),
+                        id = 4,
+                        rightValue = "PascalCase"
+                    ),
+                    Gap(
+                        currentValue = mutableStateOf(""),
+                        id = 5,
+                        rightValue = "Свойства"
+                    ),
+                    Gap(
+                        currentValue = mutableStateOf(""),
+                        id = 6,
+                        rightValue = "Методы"
+                    ),
+                    Gap(
+                        currentValue = mutableStateOf(""),
+                        id = 7,
+                        rightValue = "Конструкторы"
+                    ),
+                ),
+                text = "Когда вы определяете класс, вы указываете свойства и методы, которые" +
+                        " должны иметь все объекты этого класса. Определение класса начинается с" +
+                        " $placeholder ключевого слова, Вы можете выбрать любое имя класса, которое" +
+                        " хотите, но не используйте $placeholder слова Kotlin в качестве имени класса," +
+                        " например $placeholder . Имя класса записывается в $placeholder , поэтому каждое" +
+                        " слово начинается с заглавной буквы и между словами нет пробелов. Например," +
+                        " в S mart D evice первая буква каждого слова пишется с заглавной буквы," +
+                        " а между словами нет пробела. $placeholder .Переменные, которые определяют атрибуты объектов класса." +
+                        " $placeholder , которые содержат поведение и действия класса." +
+                        " $placeholder . Специальная функция-член, которая создает экземпляры класса во всей программе, в которой он определен.",
+            ),
+            PassTextState(
                 listGap = listOf(
                     Gap(
                         currentValue = mutableStateOf(""),
@@ -150,4 +210,5 @@ data class Gap(
     val id: Int,
     val currentValue: MutableState<String> = mutableStateOf(""),
     val rightValue: String,
+    val isSelected: Boolean = false
 )

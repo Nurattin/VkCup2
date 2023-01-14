@@ -1,11 +1,11 @@
-package com.smartdev.vkcup2.ui.screens.omissions_text.navigation
+package com.smartdev.vkcup2.ui.screens.drag_omissions_text.navigation
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.smartdev.vkcup2.base.VkCupNavigationDestination
-import com.smartdev.vkcup2.ui.screens.omissions_text.OmissionsTextScreen
-import com.smartdev.vkcup2.ui.screens.omissions_text.OmissionsTextViewModel
+import com.smartdev.vkcup2.ui.screens.drag_omissions_text.OmissionsTextScreen
+import com.smartdev.vkcup2.ui.screens.drag_omissions_text.OmissionsTextViewModel
 
 object OmissionsTextDestination : VkCupNavigationDestination {
     override val route = "omissions_text_route"

@@ -5,7 +5,11 @@
     <dimen name="container_medium">32dp</dimen>
     <dimen name="btn_small">12dp</dimen>
     <dimen name="btn_medium">14dp</dimen>
+    <dimen name="chip_extra_small">4dp</dimen>
     <dimen name="chip_small">8dp</dimen>
     <dimen name="chip_medium">12dp</dimen>
     <dimen name="chip_large">12dp</dimen>
+    <dimen name="space_between_transition_btn">50dp</dimen>
+    <dimen name="cross_axis_spacing_small">6dp</dimen>
+    <dimen name="main_axis_spacing_small">6dp</dimen>
 </resources>

@@ -2,6 +2,7 @@
 <resources>
     <style name="Theme.VkCup2" parent="android:Theme.Material.NoActionBar">
         <item name="android:statusBarColor">@color/main_background</item>
+        <item name="android:navigationBarColor">@color/main_background</item>
         <item name="android:background">@color/main_background</item>
     </style>
 </resources>

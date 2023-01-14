@@ -1,6 +1,5 @@
 package com.smartdev.vkcup2.util
 
-import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -84,14 +83,13 @@ fun <T> DragTarget(
             }) {
             content()
         }
-    }
-    else content()
+    } else content()
 }
 
 @Composable
 fun <T> DropTarget(
     modifier: Modifier,
-    content: @Composable() (BoxScope.(isInBound: Boolean, data: T?) -> Unit)
+    content: @Composable (BoxScope.(isInBound: Boolean, data: T?) -> Unit)
 ) {
 
     val dragInfo = LocalDragTargetInfo.current

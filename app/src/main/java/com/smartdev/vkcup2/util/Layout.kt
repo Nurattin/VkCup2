@@ -4,7 +4,6 @@ import androidx.compose.ui.unit.Constraints
 
 enum class LayoutOrientation {
     Horizontal,
-    Vertical
 }
 
 data class OrientationIndependentConstraints(

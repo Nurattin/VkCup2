@@ -94,7 +94,7 @@ fun ElementMappingScreen(
                         modifier = Modifier
                             .padding(horizontal = dimensionResource(id = R.dimen.container_small))
                             .align(CenterHorizontally),
-                        text = stringResource(id = R.string.element_mapping_hint),
+                        text = stringResource(id = R.string.drag_answer),
                         style = MaterialTheme.typography.caption
                     )
                     Row(

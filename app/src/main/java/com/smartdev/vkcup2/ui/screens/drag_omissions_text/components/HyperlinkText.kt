@@ -1,4 +1,4 @@
-package com.smartdev.vkcup2.ui.screens.omissions_text.components
+package com.smartdev.vkcup2.ui.screens.drag_omissions_text.components
 
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.runtime.Composable

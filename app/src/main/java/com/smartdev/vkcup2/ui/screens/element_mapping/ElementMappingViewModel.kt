@@ -101,8 +101,6 @@ class ElementMappingViewModel : ViewModel() {
 data class ElementMappingUiState(
     val questions: List<ElementMappingQuestions> = ElementMappingQuestions.mockDate,
     val page: Int = 0,
-    val resultIsCorrect: Boolean? = null
-
 )
 
 data class ElementMappingQuestions(
@@ -115,13 +113,13 @@ data class ElementMappingQuestions(
             ElementMappingQuestions(
                 questions = listOf(
                     ElementMappingQuestion(
-                        question = "Строит  контейнер зависимостей",
-                        rightAnswer = "Component",
+                        question = "Строит контейнер зависимостей (dagger2)",
+                        rightAnswer = "@Component",
                         selectedAnswer = ""
                     ),
                     ElementMappingQuestion(
-                        question = "Используется для внедрения конструктора",
-                        rightAnswer = "Inject",
+                        question = "Используется для внедрения конструктора (dagger2)",
+                        rightAnswer = "@Inject",
                         selectedAnswer = ""
                     ),
                     ElementMappingQuestion(
@@ -129,14 +127,28 @@ data class ElementMappingQuestions(
                         rightAnswer = "Hilt",
                         selectedAnswer = ""
                     ),
+                    ElementMappingQuestion(
+                        question = "Показывает какую реализацию должен иметь интерфейс (dagger2)",
+                        rightAnswer = "@Bind",
+                        selectedAnswer = ""
+                    ),
+                    ElementMappingQuestion(
+                        question = "Инкапсулирует логику предоставления зависимостей и содержит методы с аннотацией @Provide",
+                        rightAnswer = "@Module",
+                        selectedAnswer = ""
+                    ),
                 ),
                 answerOptions = listOf(
                     Answer("BindInstance"),
-                    Answer("Bind"),
-                    Answer("Component"),
-                    Answer("Inject"),
+                    Answer("@Module"),
+                    Answer("@Fetch"),
+                    Answer("@Scope"),
+                    Answer("@Bind"),
+                    Answer("@Delegate"),
+                    Answer("@Component"),
+                    Answer("@Inject"),
                     Answer("Hilt"),
-                    Answer("Provide")
+                    Answer("@Provide")
                 ),
             ), ElementMappingQuestions(
                 questions = listOf(
@@ -146,8 +158,8 @@ data class ElementMappingQuestions(
                         selectedAnswer = ""
                     ),
                     ElementMappingQuestion(
-                        question = "Процесс преобразования результата JSON в пригодные для использования данные, как это делается с помощью Gson",
-                        rightAnswer = "Converting",
+                        question = "Необязательный элемент в контексте сопрограммы для обработки неперехваченных исключений.",
+                        rightAnswer = "CoroutineExceptionHandler",
                         selectedAnswer = ""
                     ),
                     ElementMappingQuestion(
@@ -155,12 +167,27 @@ data class ElementMappingQuestions(
                         rightAnswer = "Coroutine",
                         selectedAnswer = ""
                     ),
+                    ElementMappingQuestion(
+                        question = "Метода launch() возвращает",
+                        rightAnswer = "Job",
+                        selectedAnswer = ""
+                    ),
+                    ElementMappingQuestion(
+                        question = "Оптимальный dispatchers для сетевых вызовов",
+                        rightAnswer = "Io",
+                        selectedAnswer = ""
+                    ),
                 ),
                 answerOptions = listOf(
                     Answer("CoroutineScope"),
                     Answer("Job"),
+                    Answer("Io"),
+                    Answer("Main"),
+                    Answer("Deffered"),
                     Answer("Dispatcher"),
                     Answer("Inject"),
+                    Answer("CoroutineExceptionHandler"),
+                    Answer("try-catch"),
                     Answer("Converting"),
                     Answer("Coroutine")
                 ),

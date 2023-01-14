@@ -19,7 +19,6 @@ fun NavGraphBuilder.elementMapping(
         route = ElementMappingDestination.route,
     ) {
         val viewModel: ElementMappingViewModel = viewModel()
-
         ElementMappingScreen(
             onBackClick = onBackClick,
             viewModel = viewModel

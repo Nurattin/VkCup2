@@ -7,7 +7,7 @@ import com.smartdev.vkcup2.base.VkCupNavigationDestination
 import com.smartdev.vkcup2.ui.screens.choose.ChooseScreen
 import com.smartdev.vkcup2.ui.screens.element_mapping.navigation.ElementMappingDestination
 import com.smartdev.vkcup2.ui.screens.fill_omissions_text.navigation.FillOmissionTextDestination
-import com.smartdev.vkcup2.ui.screens.omissions_text.navigation.OmissionsTextDestination
+import com.smartdev.vkcup2.ui.screens.drag_omissions_text.navigation.OmissionsTextDestination
 import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.navigation.MultiStageQuestionnaireDestination
 import com.smartdev.vkcup2.ui.screens.rating.navigation.RatingDestination
 
