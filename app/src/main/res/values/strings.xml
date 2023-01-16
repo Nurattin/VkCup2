@@ -30,6 +30,4 @@
     <string name="read_article_rating">Оценка прочитанной статьи — от 1 до 5 звёзд</string>
     <string name="rating_the_article">Rating the article</string>
     <string name="rating_the_article_hint">Для оценки статьи нажмите на плавающую кнопку действия в нижнем правом углу</string>
-
-
 </resources>

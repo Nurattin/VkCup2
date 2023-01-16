@@ -14,7 +14,6 @@ val Typography = Typography(
         fontSize = 16.sp,
         color = Color.White
     ),
-
     subtitle1 = TextStyle(
         fontFamily = FontFamily.Default,
         fontSize = 14.sp,

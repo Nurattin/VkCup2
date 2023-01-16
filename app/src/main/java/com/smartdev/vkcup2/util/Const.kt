@@ -9,7 +9,7 @@ object AnimateDuration {
     const val ExtraLong = 500
 }
 
-object AnimateEasing{
+object AnimateEasing {
     val EaseInBack: Easing = CubicBezierEasing(0.36f, 0f, 0.66f, -0.56f)
     val EaseOutBack: Easing = CubicBezierEasing(0.34f, 1.56f, 0.64f, 1f)
 }

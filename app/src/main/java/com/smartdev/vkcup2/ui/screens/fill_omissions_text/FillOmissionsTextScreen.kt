@@ -35,8 +35,8 @@ import com.smartdev.vkcup2.R
 import com.smartdev.vkcup2.common.AnimateContentSlider
 import com.smartdev.vkcup2.common.CheckButton
 import com.smartdev.vkcup2.common.TransitionButtons
-import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.components.TopAppBarWithProgress
 import com.smartdev.vkcup2.ui.screens.drag_omissions_text.placeholder
+import com.smartdev.vkcup2.ui.screens.multi_stage_questionnaire.components.TopAppBarWithProgress
 import com.smartdev.vkcup2.ui.theme.Correct
 import com.smartdev.vkcup2.ui.theme.Error
 import com.smartdev.vkcup2.ui.theme.FillUnSelected
@@ -89,6 +89,7 @@ fun FillOmissionsTextScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(horizontal = dimensionResource(id = R.dimen.container_small))
                         .verticalScroll(scrollState),
                     verticalArrangement = Arrangement.Center
                 ) {
